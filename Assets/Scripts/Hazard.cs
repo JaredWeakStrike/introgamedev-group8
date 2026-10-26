@@ -10,19 +10,27 @@ public class Hazard : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player")) KillPlayer();
+        if (other.CompareTag("Player")) KillPlayer(other.gameObject);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Player")) KillPlayer();
+        if (collision.collider.CompareTag("Player")) KillPlayer(collision.gameObject);
     }
 
-    public static void KillPlayer()
+    public static void KillPlayer(GameObject player)
     {
         PlayerDied?.Invoke();
 
-        // restart level
+        // respawn at last checkpoint
+        if (Checkpoint.Active != null)
+        {
+            player.transform.position = Checkpoint.Active.transform.position;
+            player.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+            return;
+        }
+
+        // no checkpoint, restart level
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
