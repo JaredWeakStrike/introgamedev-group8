@@ -17,10 +17,12 @@ public class TurtleEnemy : MonoBehaviour
     public float jumpAtPlayerRadius = 2f;
     [Range(0f, 10f)]
     public float maxFollowRadius = 5f;
+    private bool followingPlayer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        followingPlayer = false;
         jumpAtPlayerRadius = Mathf.Clamp(jumpAtPlayerRadius, 0, maxFollowRadius);
         justStarted = true;
         rigidbody = GetComponent<Rigidbody2D>();
@@ -45,7 +47,14 @@ public class TurtleEnemy : MonoBehaviour
 
         // movement
         FollowPlayer();
-        rigidbody.AddForce(Vector2.right * (isMovingRight ? walkScalar : -walkScalar));
+
+        if (followingPlayer)
+        {
+            rigidbody.AddForce(Vector2.right * (isMovingRight ? walkScalar : -walkScalar));
+        } else
+        {
+            rigidbody.AddForce(Vector2.right * (isMovingRight ? walkScalar : -walkScalar) * 0.1f);
+        }
         justStarted = false;
     }
 
@@ -78,6 +87,11 @@ public class TurtleEnemy : MonoBehaviour
                 isMovingRight = false;
             if (target.transform.position.x > transform.position.x)
                 isMovingRight = true;
+
+            followingPlayer = true;
+        } else
+        {
+            followingPlayer = false;
         }
 
         // if player is in jump radius. we jump that bum
