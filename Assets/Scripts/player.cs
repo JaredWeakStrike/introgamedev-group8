@@ -12,6 +12,7 @@ public class player : MonoBehaviour
     private Rigidbody2D rigidbody;
     private bool jumping = false;
     private bool jumped = false;
+    private bool grounded = false;
     private bool doubleJumped = false;
     private bool doubleJumping = false;
     public int dashDownWindow = 10;
@@ -37,10 +38,16 @@ public class player : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (rigidbody.attachedColliderCount <= 0)
+        {
+            grounded = false;
+        }
+
         if (dashDownTimer > 0 && !dashedDown) {
             --dashDownTimer;
             dashedDown = dashDownTimer > 0;
         }
+
         Move();
     }
 
@@ -52,18 +59,20 @@ public class player : MonoBehaviour
 
         // jump action direction
         if (!jumped)
-            jumping = jump.WasPressedThisFrame() && rigidbody.linearVelocityY < 0.1;
+            jumping = (jump.WasPressedThisFrame() || moveDirection.y > 0) && rigidbody.linearVelocityY < 0.1;
         else if (!doubleJumped)
-            doubleJumping = jump.WasPerformedThisFrame();
+            doubleJumping = jump.WasPressedThisFrame();
 
         // dashing down (ground pound) detection
-        if (canDashDown)
-            dashedDown = moveDirection.y < 0 && canDashDown;
+        dashedDown = canDashDown && moveDirection.y < 0;
 
         if (moveDirection.y < 0 && !dashedDown)
         {
             dashDownTimer = dashDownWindow;
             canDashDown = true;
+        } else if (dashedDown)
+        {
+            canDashDown = false;
         }
     }
 
@@ -72,7 +81,11 @@ public class player : MonoBehaviour
     void Move()
     {
         // processing horizontal movement
-        rigidbody.AddForce(new Vector2(moveDirection.x * moveScalar, 0));
+        if (grounded) 
+            rigidbody.AddForce(new Vector2(moveDirection.x * moveScalar, 0));
+        else
+            rigidbody.AddForce(new Vector2(moveDirection.x * moveScalar * 0.5f, 0));
+
 
         // processing jump action
         if (jumping)
@@ -80,6 +93,7 @@ public class player : MonoBehaviour
             jumping = false;
             rigidbody.AddForce(jumpScalar * Vector2.up);
             jumped = true;
+            grounded = false;
         }
 
         // processing jump action while not grounded (double jump)
@@ -99,10 +113,10 @@ public class player : MonoBehaviour
         }
 
         // grounded friction affects how fast you come to a stop
-        if (!jumped && moveDirection.x == 0) rigidbody.linearVelocityX *= 0.65f;
+        if (grounded && moveDirection.x == 0) rigidbody.linearVelocityX *= 0.65f;
         // grounded friction affects how fast you can change direction
         //      being in the air (jumped == true) means no ground friction, so more acceleration & less resistance
-        if (!jumped && moveDirection.x != 0 && Mathf.Sign(moveDirection.x) != Mathf.Sign(rigidbody.linearVelocityX))
+        if (grounded && moveDirection.x != 0 && Mathf.Sign(moveDirection.x) != Mathf.Sign(rigidbody.linearVelocityX))
             rigidbody.linearVelocityX *= 0.5f;
 
         if (dashedDown)
@@ -118,6 +132,8 @@ public class player : MonoBehaviour
     // only implemented for ground collision
     void OnCollisionEnter2D(Collision2D collision)
     {
+        grounded = false;   
+
         // ground collision means you are grounded (jumped == false)
         if (collision.transform.tag == "Ground")
         {
@@ -127,15 +143,25 @@ public class player : MonoBehaviour
                 dashDownTimer = 0;
                 canDashDown = false;
                 dashedDown = false;
-                doubleJumped = false;
                 groundPound = false;
-}
+
+                if (collision.transform.position.y <= transform.position.y
+                 && collision.transform.position.x - collision.transform.lossyScale.x <= transform.position.x
+                 && collision.transform.position.x + collision.transform.lossyScale.x >= transform.position.x)
+                {
+                    grounded = true;
+                    doubleJumped = false;
+                    print("Grounded");
+                }
+            }
         }
 
-        // ground that you can't wall jumping
+        // ground that you can't wall jump
         if (collision.transform.tag == "SlipGround")
         {
-            if (collision.transform.position.y + collision.transform.lossyScale.y <= transform.position.y)
+            if (collision.transform.position.y <= transform.position.y
+                && collision.transform.position.x - collision.transform.lossyScale.x <= transform.position.x
+                && collision.transform.position.x + collision.transform.lossyScale.x >= transform.position.x)
             {
                 jumped = false;
                 dashDownTimer = 0;
@@ -143,7 +169,29 @@ public class player : MonoBehaviour
                 dashedDown = false;
                 doubleJumped = false;
                 groundPound = false;
+                grounded = true;
+                print("Grounded");
             }
         }
+    }
+
+    public bool isMoving()
+    {
+        return rigidbody.linearVelocity.magnitude != 0;
+    }
+
+    public Vector2 getMoveDirection ()
+    {
+        return moveDirection;
+    }
+
+    public bool isGroundPounding()
+    {
+        return groundPound;
+    }
+
+    public bool isGrounded()
+    {
+        return grounded;
     }
 }
