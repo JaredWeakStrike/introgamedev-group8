@@ -119,6 +119,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &120456470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 120456471}
+  m_Layer: 0
+  m_Name: Focus 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &120456471
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120456470}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 39, y: 6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &131476825
 GameObject:
   m_ObjectHideFlags: 0
@@ -2870,6 +2901,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1450078703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1450078704}
+  m_Layer: 0
+  m_Name: Focus End
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1450078704
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450078703}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 55, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1745845663
 GameObject:
   m_ObjectHideFlags: 0
@@ -3102,6 +3164,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1822156688}
   m_CullTransparentMesh: 1
+--- !u!1 &1967720189
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1967720190}
+  m_Layer: 0
+  m_Name: Focus 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1967720190
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967720189}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7327654952409272825
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3154,6 +3247,22 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 1084135471}
+    - target: {fileID: 7399188652963359869, guid: 6edfeb1c72de9bf40a92c5bd47f81081, type: 3}
+      propertyPath: focusPoints.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7399188652963359869, guid: 6edfeb1c72de9bf40a92c5bd47f81081, type: 3}
+      propertyPath: 'focusPoints.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1967720189}
+    - target: {fileID: 7399188652963359869, guid: 6edfeb1c72de9bf40a92c5bd47f81081, type: 3}
+      propertyPath: 'focusPoints.Array.data[1]'
+      value: 
+      objectReference: {fileID: 120456470}
+    - target: {fileID: 7399188652963359869, guid: 6edfeb1c72de9bf40a92c5bd47f81081, type: 3}
+      propertyPath: 'focusPoints.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1450078703}
     - target: {fileID: 7748324842961504788, guid: 6edfeb1c72de9bf40a92c5bd47f81081, type: 3}
       propertyPath: m_Name
       value: Main Camera
@@ -3211,6 +3320,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2479370532117277836, guid: 2b8add5284dd6664590705a84612cae0, type: 3}
+      propertyPath: moveScalar
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 5238171810865925464, guid: 2b8add5284dd6664590705a84612cae0, type: 3}
       propertyPath: m_Name
       value: Player
@@ -3232,3 +3345,6 @@ SceneRoots:
   - {fileID: 1342597477}
   - {fileID: 485427197}
   - {fileID: 1745845666}
+  - {fileID: 1967720190}
+  - {fileID: 120456471}
+  - {fileID: 1450078704}
