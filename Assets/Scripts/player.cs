@@ -130,48 +130,56 @@ public class player : MonoBehaviour
 
     // collisions
     // only implemented for ground collision
+    // Uses contact normals instead of the ground object's position/scale, so it works on a
+    // Tilemap (the whole level is one collider) as well as on separate blocks:
+    //   normal.y > 0.5    -> standing on top of the surface (floor)
+    //   |normal.x| > 0.5  -> touching the side of the surface (wall)
+    //   normal.y < -0.5   -> hitting it from below (ceiling), resets nothing
     void OnCollisionEnter2D(Collision2D collision)
     {
-        grounded = false;   
+        grounded = false;
+        CheckGround(collision, true);
+    }
 
-        // ground collision means you are grounded (jumped == false)
-        if (collision.transform.tag == "Ground")
+    // landing while still touching the same collider (e.g. sliding down a tilemap wall onto its floor)
+    // doesn't fire OnCollisionEnter2D again, so floor contacts are also checked while touching
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (!grounded && rigidbody.linearVelocityY <= 0.01f)
+            CheckGround(collision, false);
+    }
+
+    void CheckGround(Collision2D collision, bool allowWall)
+    {
+        bool isGround = collision.collider.CompareTag("Ground");
+        bool isSlipGround = collision.collider.CompareTag("SlipGround");
+        if (!isGround && !isSlipGround) return;
+
+        bool onFloor = false;
+        bool onWall = false;
+        for (int i = 0; i < collision.contactCount; i++)
         {
-            if (collision.transform.position.y - collision.transform.lossyScale.y < transform.position.y) // allow for wall jumping
-            {
-                jumped = false;
-                dashDownTimer = 0;
-                canDashDown = false;
-                dashedDown = false;
-                groundPound = false;
-
-                if (collision.transform.position.y <= transform.position.y
-                 && collision.transform.position.x - collision.transform.lossyScale.x <= transform.position.x
-                 && collision.transform.position.x + collision.transform.lossyScale.x >= transform.position.x)
-                {
-                    grounded = true;
-                    doubleJumped = false;
-                    print("Grounded");
-                }
-            }
+            Vector2 normal = collision.GetContact(i).normal;
+            if (normal.y > 0.5f) onFloor = true;
+            else if (Mathf.Abs(normal.x) > 0.5f) onWall = true;
         }
 
-        // ground that you can't wall jump
-        if (collision.transform.tag == "SlipGround")
+        // ground collision means you are grounded (jumped == false)
+        // "Ground" also resets the jump from its sides (allows wall jumping), "SlipGround" doesn't
+        if (onFloor || (isGround && onWall && allowWall))
         {
-            if (collision.transform.position.y <= transform.position.y
-                && collision.transform.position.x - collision.transform.lossyScale.x <= transform.position.x
-                && collision.transform.position.x + collision.transform.lossyScale.x >= transform.position.x)
-            {
-                jumped = false;
-                dashDownTimer = 0;
-                canDashDown = false;
-                dashedDown = false;
-                doubleJumped = false;
-                groundPound = false;
-                grounded = true;
-                print("Grounded");
-            }
+            jumped = false;
+            dashDownTimer = 0;
+            canDashDown = false;
+            dashedDown = false;
+            groundPound = false;
+        }
+
+        if (onFloor)
+        {
+            grounded = true;
+            doubleJumped = false;
+            print("Grounded");
         }
     }
 
