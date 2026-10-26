@@ -44,9 +44,11 @@ public class BasicEnemy : MonoBehaviour
     {
         if (collision.transform.tag == "Player")
         {
-            if (collision.transform.position.y >= transform.position.y + (transform.localScale.y / 2 * deathRadius))
+            if (collision.transform.position.y >= transform.position.y + (transform.localScale.y / 2 * deathRadius)
+                || collision.transform.GetComponent<player>().isGroundPounding())
             {
                 Die();
+                collision.rigidbody.linearVelocityY = 0;
                 collision.rigidbody.AddForce(Vector2.up * jumpScalar);
             }
             else

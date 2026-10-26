@@ -64,7 +64,8 @@ public class player : MonoBehaviour
             doubleJumping = jump.WasPressedThisFrame();
 
         // dashing down (ground pound) detection
-        dashedDown = canDashDown && moveDirection.y < 0;
+        dashedDown = canDashDown && moveDirection.y < 0 && !grounded;
+        if (grounded) groundPound = false;
 
         if (moveDirection.y < 0 && !dashedDown)
         {
@@ -195,7 +196,7 @@ public class player : MonoBehaviour
 
     public bool isGroundPounding()
     {
-        return groundPound;
+        return groundPound && rigidbody.linearVelocityY < -0.1;
     }
 
     public bool isGrounded()
