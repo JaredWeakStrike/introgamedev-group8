@@ -79,6 +79,8 @@ public class TurtleEnemy : MonoBehaviour
     // follow player
     private void FollowPlayer()
     {
+        if (target == null) return;
+
         // if player is in follow radius...
         if (Vector2.Distance(transform.position, target.transform.position) <= maxFollowRadius)
         {
