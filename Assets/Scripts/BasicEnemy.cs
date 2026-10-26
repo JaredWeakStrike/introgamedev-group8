@@ -28,6 +28,7 @@ public class BasicEnemy : MonoBehaviour
 
     void FixedUpdate()
     {
+        // if stopped, switch direction and MOVE
         if (rigidbody.linearVelocityX == 0)
         {
             if (!justStarted)
@@ -40,10 +41,12 @@ public class BasicEnemy : MonoBehaviour
         justStarted = false;
     }
 
+    // detects for player, attacks that bum or gets attacked by that bum 
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.transform.tag == "Player")
         {
+            // if player is above enemy at a certain threshold and/or player is ground pounding #ripbozo #packwatch
             if (collision.transform.position.y >= transform.position.y + (transform.localScale.y / 2 * deathRadius)
                 || collision.transform.GetComponent<player>().isGroundPounding())
             {
@@ -51,16 +54,13 @@ public class BasicEnemy : MonoBehaviour
                 collision.rigidbody.linearVelocityY = 0;
                 collision.rigidbody.AddForce(Vector2.up * jumpScalar);
             }
-            else
+            else // kill player instead since player is not in killing motion
                 Hazard.KillPlayer(collision.gameObject);
         }
     }
 
     public void Die()
     {
-        transform.position = Vector2.zero;
-        rigidbody.linearVelocity = Vector2.zero;
-        this.gameObject.SetActive(false);
         Destroy(this.gameObject);            
     }
 }

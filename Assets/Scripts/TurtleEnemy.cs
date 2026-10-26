@@ -12,10 +12,16 @@ public class TurtleEnemy : MonoBehaviour
     public bool isMovingRight = false;
     private bool justStarted;
     private Rigidbody2D rigidbody;
+    public player target;
+    [Range(0f, 5f)]
+    public float jumpAtPlayerRadius = 2f;
+    [Range(0f, 10f)]
+    public float maxFollowRadius = 5f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        jumpAtPlayerRadius = Mathf.Clamp(jumpAtPlayerRadius, 0, maxFollowRadius);
         justStarted = true;
         rigidbody = GetComponent<Rigidbody2D>();
     }
@@ -28,6 +34,7 @@ public class TurtleEnemy : MonoBehaviour
 
     void FixedUpdate()
     {
+        // if stopped, switch direction and MOVE
         if (rigidbody.linearVelocityX == 0)
         {
             if (!justStarted)
@@ -36,14 +43,18 @@ public class TurtleEnemy : MonoBehaviour
             } 
         }
 
+        // movement
+        FollowPlayer();
         rigidbody.AddForce(Vector2.right * (isMovingRight ? walkScalar : -walkScalar));
         justStarted = false;
     }
 
+    // detects for player, attacks that bum or gets attacked by that bum 
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.transform.tag == "Player")
         {
+            // if player is above enemy at a certain threshold and/or player is ground pounding #ripbozo #packwatch
             if (collision.transform.position.y >= transform.position.y + (transform.localScale.y / 2 * deathRadius)
                 || collision.transform.GetComponent<player>().isGroundPounding())
             {
@@ -51,33 +62,33 @@ public class TurtleEnemy : MonoBehaviour
                 collision.rigidbody.linearVelocityY = 0;
                 collision.rigidbody.AddForce(Vector2.up * jumpScalar);
             }
-            else
+            else // kill player instead since player is not in killing motion
                 Hazard.KillPlayer(collision.gameObject);
         }
     }
 
-    void OnCollisionStay2D(Collision2D collision)
+    // follow player
+    private void FollowPlayer()
     {
-        if ((collision.transform.tag == "Ground" || collision.transform.tag == "SlipGround") &&
-            collision.transform.position.y <= transform.position.y - transform.localScale.y)
-            if (transform.position.x - transform.localScale.x < collision.transform.position.x - collision.transform.lossyScale.x)
-            {
-                rigidbody.linearVelocity = Vector2.zero;
-                isMovingRight = true;
-                rigidbody.AddForce(Vector2.right * walkScalar);
-            } else if (transform.position.x + transform.localScale.x > collision.transform.position.x + collision.transform.lossyScale.x)
-            {
-                rigidbody.linearVelocity = Vector2.zero;
+        // if player is in follow radius...
+        if (Vector2.Distance(transform.position, target.transform.position) <= maxFollowRadius)
+        {
+            //...then swap directions to face the player
+            if (target.transform.position.x < transform.position.x)
                 isMovingRight = false;
-                rigidbody.AddForce(Vector2.right * -walkScalar);
-            }
+            if (target.transform.position.x > transform.position.x)
+                isMovingRight = true;
+        }
+
+        // if player is in jump radius. we jump that bum
+        if (Vector2.Distance(transform.position, target.transform.position) <= jumpAtPlayerRadius &&
+            target.transform.position.y > transform.position.y && rigidbody.linearVelocityY <= 0)
+            rigidbody.AddForce(Vector2.up * jumpScalar);
     }
 
+    // destroy it
     public void Die()
     {
-        transform.position = Vector2.zero;
-        rigidbody.linearVelocity = Vector2.zero;
-        this.gameObject.SetActive(false);
         Destroy(this.gameObject);            
     }
 }
